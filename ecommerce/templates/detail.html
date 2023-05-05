@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}
+PRODUITS | home
+{%endblock%}
+{% block content%}
+<!-- Modal -->
+
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="productModalLabel">{{ product.name }}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" >
+            <a href="{% url 'Home' %}" class="btn btn-outline-success">
+            <span aria-hidden="true">&times;</span>
+            </a>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-4">
+              <img src="{{ product.image.url }}" class="img-fluid" alt="{{ product.name }}">
+            </div>
+            <div class="col-md-8">
+              <p >{{ product.description }}</p>
+              <p>Prix: {{ product.price }} €</p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+            <a href="{% url 'panier' %}" class="btn btn-outline-success">Ajouter</a>
+        </div>
+      </div>
+    </div>
+  
+
+{% endblock %}
+
+
+  

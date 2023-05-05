@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block title %}
+PRODUITS | home
+<style>
+  .card-img-top {
+  max-height: 300px; /* définir la hauteur maximale des images */
+  max-width: 100%; /* définir la largeur maximale des images */
+  object-fit: contain; /* permettre aux images de conserver leur ratio d'aspect */
+  background-color: blueviolet;
+}
+
+.card-img-top.mx-auto {
+  display: block;
+  margin: 0 auto; /* centrer horizontalement les images */
+}
+
+</style>
+{%endblock%}
+{% block content%}
+<div class="container mt-4">
+
+    <!-- Barre de recherche -->
+    <form action="{% url 'search' %}" method="GET" class="form-inline my-2 my-lg-0">
+      <input class="form-control mr-sm-2" type="search" placeholder="Recherche" aria-label="Recherche" name="q" value="{{ request.GET.q }}">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Recherche</button>
+    </form>
+  
+    <!-- Liste des produits -->
+    <div class="row mt-4">
+      {% for produit in produits %}
+      <div class="col-md-4 mb-3">
+        <div class="card h-100">
+          <img class="card-img-top mx-auto" src="/media/{{produit.image}}" alt="{{ produit.nom }}">
+
+          <div class="card-body">
+            <h5 class="card-title">{{ produit.name }}</h5>
+            <p class="card-text">{{ produit.categorie }}</p>
+            <p class="card-text">{{ produit.description }}</p>
+            <p class="card-text">{{ produit.price }} DH</p>
+            <a href="{% url 'ajouter_au_panier' id=produit.id %}" class="btn btn-outline-success">Ajouter</a>
+            <a href="{% url 'detail' id=produit.id %}" class="btn btn-primary">Voir le produit</a>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <p>Aucun produit trouvé.</p>
+      {% endfor %}
+    </div>
+    
+    <!-- Pagination -->
+    {% if produits.has_other_pages %}
+    <nav aria-label="Page navigation example">
+      <ul class="pagination justify-content-center mt-4">
+        {% if produits.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ produits.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+            <span class="sr-only">Précédent</span>
+          </a>
+        </li>
+        {% endif %}
+        {% for num in produits.paginator.page_range %}
+        {% if produits.number == num %}
+        <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+        {% elif num > produits.number|add:'-3' and num < produits.number|add:'3' %}
+        <li class="page-item"><a class="page-link" href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ num }}</a></li>
+        {% endif %}
+        {% endfor %}
+        {% if produits.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ produits.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+            <span class="sr-only">Suivant</span>
+          </a>
+        </li>
+        {% endif %}
+      </ul>
+    </nav>
+    {% endif %}
+  
+  </div>
+{% endblock %}

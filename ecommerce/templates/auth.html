@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Formulaires de connexion et d'inscription</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+		}
+		.container {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			margin-top: 50px;
+		}
+		.form {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			background-color: #f5f5f5;
+			padding: 20px;
+			border-radius: 5px;
+			box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+			transition: all 0.5s ease-in-out;
+			transform: translateX(0%);
+			opacity: 1;
+            position: absolute;
+		}
+		.form.hidden {
+			transform: translateX(-100%);
+			opacity: 0;
+		}
+		.form-title {
+			margin-top: 0;
+			margin-bottom: 20px;
+		}
+		input[type="text"], input[type="password"],input[type="tel"],input[type="email"] {
+			width: 100%;
+			margin-bottom: 20px;
+			padding: 10px;
+			border-radius: 5px;
+			border: none;
+			box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+			font-size: 16px;
+		}
+		button {
+			background-color: #4CAF50;
+			color: white;
+			padding: 10px 20px;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+			font-size: 16px;
+			transition: all 0.3s ease-in-out;
+		}
+		button:hover {
+			background-color: #3e8e41;
+		}
+		button:focus {
+			outline: none;
+		}
+		.form-toggle {
+			margin-top: 20px;
+			color: #4CAF50;
+			font-size: 14px;
+			cursor: pointer;
+			transition: all 0.3s ease-in-out;
+		}
+		.form-toggle:hover {
+			color: #3e8e41;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="form form-login">
+            <form  method="post"  action="{% url 'passer_commande2' %}">
+                {% csrf_token %}
+                <h2 class="form-title">Connexion</h2>
+                <input name="user" id="user" type="text" placeholder="Nom d'utilisateur ou adresse email">
+                <input name="pw" id="pw"  type="password" placeholder="Mot de passe">
+                <input type="hidden" name="Total" id="Total" value="{{total}}">
+
+                <button type="submit" class="btn btn-primary">Se connecter</button>
+            </form>
+			<p class="form-toggle">Pas encore de compte? S'inscrire</p>
+		</div>
+		<div class="form form-signup hidden">
+			<h2 class="form-title">Inscription</h2>
+            <form method="post"  action="{% url 'passer_commande1' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                  <label for="nom">Nom :</label>
+                  <input type="text" name="nom" id="nom" class="form-control">
+                </div>
+                <div class="form-group">
+                  <label for="prenom">Prénom :</label>
+                  <input type="text" name="prenom" id="prenom" class="form-control">
+                </div>
+                <div class="form-group">
+                  <label for="adresse">Adresse :</label>
+                  <input type="text" name="adresse" id="adresse" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                  <label for="telephone">Téléphone :</label>
+                  <input type="tel" name="telephone" id="telephone" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="email">email :</label>
+                    <input type="email" name="email" id="email" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <label for="password">password :</label>
+                    <input type="password" name="pw" id="pw" class="form-control">
+                  </div>
+                  <input type="hidden" name="Total" id="Total" value="{{total}}">
+                  <div class="text-end">
+                <button type="submit" class="btn btn-primary">s'inscrir</button>
+                  </div>
+            </form>
+			<p class="form-toggle">Déjà membre? Se connecter</p>
+		</div>
+	</div>
+	<script>
+        const formLogin = document.querySelector('.form-login');
+        const formSignup = document.querySelector('.form-signup');
+        const formToggle = document.querySelectorAll('.form-toggle');
+    
+        formToggle.forEach(toggle => {
+            toggle.addEventListener('click', () => {
+                formLogin.classList.toggle('hidden');
+                formSignup.classList.toggle('hidden');
+            });
+        });
+    </script>
+</body>
+</html>    

@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block title %}
+PRODUITS | home
+{% endblock %}
+{% block content %}
+  <div class="row">
+    <div class="col-lg-8">
+        <div class="card mb-3">
+            <div class="row no-gutters">
+              
+              <div class="col-md-8">
+                <div class="card-body">
+      {% for produit in panier %}
+      
+              <h5 class="card-title">{{ produit.name }}</h5>
+              <p class="card-text">Prix unitaire : <span id="prix-unitaire-{{ produit.id }}">{{ produit.price }}</span></p>
+              <div class="form-group">
+                <label for="{{ produit.id }}">Quantité :</label>
+                <input type="number" name="quantite" id="{{ produit.id }}" value="1" min="1" class="form-control"  disabled>
+              </div>
+              <p class="card-text">Prix total : <span id="prix-total-{{ produit.id }}" >{{ produit.price }}</span></p>
+         
+      {% endfor %}
+    </div>
+</div>
+</div>
+</div>
+      <div class="row">
+        <div class="col-lg-12">
+          <h4 class="text-right">Total : <span id="total">{{ total }}</span></h4>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Informations de livraison</h5>
+          <form method="post"  action="{% url 'passer_commande' %}">
+            {% csrf_token %}
+              <input type="hidden" name="Total" id="Total">
+              <div class="text-end">
+                <button type="submit" class="btn btn-primary">Passer la commande</button>
+              </div>
+        </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    
+   
+    function calculerTotal() {
+      var total = 0;
+      var elements = document.querySelectorAll('span[id^="prix-total-"]');
+      elements.forEach(function(element) {
+        total += parseFloat(element.textContent);
+      });
+      document.getElementById('total').textContent = total.toFixed(2);
+      document.getElementById('Total').value=total.toFixed(2);;
+      // Enregistrer le total dans le localStorage
+      localStorage.setItem('total', total.toFixed(2));
+    }
+    function chargerQuantitesEtPrixTotals() {
+      var elements = document.querySelectorAll('input[name="quantite"]');
+      elements.forEach(function(element) {
+        var id = element.id;
+        var quantite = localStorage.getItem('quantite_' + id);
+        var prixTotal = localStorage.getItem('prix_total_' + id);
+        if (quantite && prixTotal) {
+          element.value = quantite;
+          document.getElementById('prix-total-' + id).textContent = prixTotal;
+        }
+      });
+       calculerTotal();
+    }
+    
+    chargerQuantitesEtPrixTotals();
+  </script>
+  
+{% endblock %}
+
+
+
+
+
+
+
+
+
+

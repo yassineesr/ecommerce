@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block title %}
+PRODUITS | home
+{%endblock%}
+{% block content %}
+  <h1>Panier</h1>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Produit</th>
+        <th>Prix unitaire</th>
+        <th>Quantité</th>
+        <th>Prix total</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="panier-body">
+      {% for produit in panier %}
+        <tr>
+          <td>{{ produit.name }}</td>
+          <td><span id="prix-unitaire-{{ produit.id }}">{{ produit.price }}</span></td>
+          <td>
+            <button class="btn btn-sm btn-primary" onclick="decrementer('{{ produit.id }}')">-</button>
+            <input type="number" name="quantite" id="{{ produit.id }}" value="1" min="1" onchange="calculerPrixTotal('{{ produit.id }}', this.value)">
+            <button class="btn btn-sm btn-primary" onclick="incrementer('{{ produit.id }}')">+</button>
+          </td>
+          <td><span id="prix-total-{{ produit.id }}" >{{ produit.price }}</span></td>
+          <td>
+            <a href="{% url 'supprimer' id=produit.id %}" class="btn btn-danger btn-sm">Supprimer</a>
+          </td>
+        </tr>
+      {% endfor %}
+      <tr>
+        <td colspan="3" class="text-right"><strong>Total</strong></td>
+        <td><strong id="total">{{ total }}</strong></td>
+        
+        <td><a href="{% url 'checkout' %}" class="btn btn-success">Checkout</a></td>
+      </tr>
+    </tbody>
+  </table>
+  <script>
+    function incrementer(id) {
+      var quantite = parseInt(document.getElementById(id).value)+1;
+      document.getElementById(id).value = quantite;
+      calculerPrixTotal(id, quantite);
+    }
+  
+    function decrementer(id) {
+      var quantite = parseInt(document.getElementById(id).value);
+      if (quantite > 1) {
+        quantite -= 1;
+        document.getElementById(id).value = quantite;
+        calculerPrixTotal(id, quantite);
+      }
+    }
+    
+    function calculerPrixTotal(id, quantite) {
+      var prixUnitaire = parseFloat(document.getElementById('prix-unitaire-' + id).textContent);
+      var prixTotal = prixUnitaire * quantite;
+      document.getElementById('prix-total-' + id).textContent = prixTotal.toFixed(2);
+      calculerTotal();
+      // Enregistrer la quantité et le prix total dans le localStorage
+      localStorage.setItem('quantite_' + id, quantite);
+      localStorage.setItem('prix_total_' + id, prixTotal.toFixed(2));
+    }
+    
+    function calculerTotal() {
+      var total = 0;
+      var elements = document.querySelectorAll('span[id^="prix-total-"]');
+      elements.forEach(function(element) {
+        total += parseFloat(element.textContent);
+      });
+      document.getElementById('total').textContent = total.toFixed(2);
+      
+      // Enregistrer le total dans le localStorage
+      localStorage.setItem('total', total.toFixed(2));
+    }
+    
+    // Récupérer les quantités et les prix totaux du localStorage et les utiliser pour initialiser les champs
+    function chargerQuantitesEtPrixTotals() {
+      var elements = document.querySelectorAll('input[name="quantite"]');
+      elements.forEach(function(element) {
+        var id = element.id;
+        var quantite = localStorage.getItem('quantite_' + id);
+        var prixTotal = localStorage.getItem('prix_total_' + id);
+        if (quantite && prixTotal) {
+          element.value = quantite;
+          document.getElementById('prix-total-' + id).textContent = prixTotal;
+        }
+      });
+      calculerTotal();
+    }
+    
+    chargerQuantitesEtPrixTotals();
+  </script>
+  
+{% endblock %}
